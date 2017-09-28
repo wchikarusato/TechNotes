@@ -1,0 +1,397 @@
+== Phoenix Note
+\\res.webcrew.local\fileserver\Group\システムDiv\開発運用\フェニックス\マニュアル・資料
+
+-  繋ぎ先
+http://admin-dev.phoenix.webcrew.co.jp/phoenix_admin/jsp/login.jsp
+サイトid:91063
+サイト名:トレーニング（佐藤（光））
+短縮名:tr-h-sato
+
+トレーニング用のサーバーにterminalで接続する場合
+10.81.50.220
+appserver/gomainu55
+
+トレーニングの環境を例に解説する
+=  登場人物
+10.81.50.217 フェニックス本体WEBサーバ
+10.81.50.218 フェニックス本体APPサーバ
+10.81.50.219 フェニックスimageサーバ
+10.81.50.221 トレーニングのプレビューログが表示されるサーバー
+10.81.50.220 フェニックス管理ツール用WEB・APPサーバ
+  プレビューは別ドメインで違うサーバーの模様
+
+
+- httpd
+/usr/local/apache/conf/vhosts/www-zba.conf
+  43   JkMount /car-kaitori/* wcdev218
+    apacheのVirtualHostで /car-kaitori/* を wcdev218にマッピングするという意味
+  302  Include conf/include/car-kaitori.conf
+   car-kaitori用のhttpd.confの場所 リダイレクトルールが書いてある
+
+  上記仕組みにより、10.81.50.217:80/car-kaitori/にアクセスした場合、
+  10.81.50.218 のtomcatにリクエストが渡る
+
+
+- tomcat
+使われてる環境変数
+CATALINA_HOME=/usr/local/tomcat
+  /usr/local/tomcatはシンボリックリンクで実体は/usr/local/apache-tomcat-6.0.29
+
+/usr/local/tomcat/conf/catalina.properties
+  74 shared.loader=${catalina.base}/shared,${catalina.base}/shared/lib/*.jar
+    tomcatの設定ファイルその1。tomcat起動時に読み込む設定ファイルやjarファイルを定義
+    現状、shared配下のjarファイルを読み込んでいる模様
+
+/usr/local/tomcat/shared/
+  db.properties
+    OracleDriverでcairoに接続する為のdb設定ファイル
+  log4wc.properties.xxx
+    ログ設定ファイル。
+    例
+    log4wc.properties otherlogの設定ファイル。/home/www/localhost/logs/tomcat/のパスやファイル名を定義している
+    log4wc.properties.phoenix	phoenix-filterのログを設定する
+    log4wc.properties.filters	filterのログを設定する
+
+/usr/local/tomcat/shared/lib/phoenix_filters.jar
+  フェニックスと呼ばれているphoenix_filtersの本体
+  jarで固めているという事はphoenix_filterリポジトリで変更発生した場合、サイト全体に影響を与える
+  全てをコンパイルし直してjarごと更新する必要がある為。
+
+/usr/local/apache-tomcat-6.0.29-expe/
+/usr/local/apache-tomcat-6.0.29-branch/
+  apache-tomcat-6.0.29-xxx/系統は全部バックアップ?
+
+
+### ここから phoenix_filters.jar の中身
+-- Runnable(スレッド)で定期的に動くもの
+implements Runnableしてるクラス
+
+jp/co/webcrew/filters/util/
+QueueThreadUtil  キューでスレッドを立ち上げる為の親クラス
+  =>AccesslogThread
+  =>ConversionThread
+  =>PointThread
+  =>AdThread
+  =>CallListRegistThread
+  =>MemberRegistThread
+  =>PointAdThread
+  =>ProxyRequesterThread
+
+jp/co/webcrew/loader/loader/
+LoadManager
+  5秒置きに以下を処理
+  logic_storeに登録したjavaのコンパイル(RepositoryManager)
+  classオブジェクトロード(DynamicClassLoader)
+
+PhoenixBackgroundRefreshMstDB (__BackgroundThread privateクラス)
+  一定時間置きにrefresh_meta_mstを読み込む
+  refresh_meta_mstの期間(分)カラム置きに更新
+
+
+-- HttpServletでポート監視して動くもの(extends HttpServlet)
+SstagInitServlet
+  initクラス
+HtmlServlet
+  doGet, doPost が定義されているメイン処理に相当するクラス
+  doGetもdoPostも同じserveResourceメソッドを呼び出している
+  serveResourceメソッドでHtmlServletUtilのgetEntryメソッドを呼び出している
+  getEntryで HTML_STORE を全カラム取得し、CONTENTSカラムをレスポンスとして返している。
+    具体的な処理の流れ:
+    SITE_MST からsiteidを検索してSCHEMAを取得
+    HTML_STORE からSCHEMAを検索して全てのカラムを取得し、entry変数に格納する
+    ServletOutputStreamを使ってentryのcontentsカラムをレスポンスとして返す
+    contentsにはhtmlのコードが入っているので、以上の仕組みでhtmlの中身が返る
+    ※ この時点ではまだ contentsカラム の中身をdbから取り出しただけ。
+      sstagや$$変数などの固有タグはまだ htmlに記述したコードのまま
+
+
+-- サーブレットフィルターで動くもの
+/home/www/localhost/webapps/ROOT/WEB-INF/web.xml
+tomcatの設定その2
+
+
+  記載例. ReplaceFilter(sstagで括った個所を置換する為のクラス)の設定
+  55     <filter>
+  56       <filter-name>ReplaceFilter</filter-name>
+  57       <filter-class>jp.co.webcrew.filters.filters.replace.ReplaceFilter</filter-class>
+  58       <init-param>
+  59         <param-name>defalutCharacterEncoding</param-name>
+  60         <param-value>UTF-8</param-value>
+  61       </init-param>
+         ....
+         </filter>
+
+  89     <filter-mapping>
+  90       <filter-name>ReplaceFilter</filter-name>
+  91       <url-pattern>/*</url-pattern>
+  92     </filter-mapping>
+  <filter>で括ったところにclassファイルとfilter名をマッピング
+  <filter-mapping>で括ったところにurlとfilter名とのマッピングが定義されている
+
+  リクエスト時のfilter-mappingの処理の順番は url-pattern > servlet-name で優先され、更に上から順に処理される
+  逆にレスポンス時は servlet-name > url-pattern で下から順に処理される模様
+  要するにエレベーターと同じlast-in-first-out
+
+
+### ここからphoenix_filterの中身 ###
+jp/co/webcrew/phoenix/servlet/
+SstagInitServlet javaライブラリのHttpServletを継承している
+  initメソッドで sstagのtype名とクラス名をマッピングしている(ファクトリー?)
+  例.type=logicの場合 LogicExecuter.class.getName()がマッピングされている。
+
+
+CustomHttpServletRequest
+  
+CustomHttpServletResponse
+  
+
+ここからReplaceFilterの中身
+doFilterメソッドからdoReplaceメソッドを呼び出して固有タグの置換を行う
+
+
+SSTagExecuter
+継承 LogicExecuter executeの中でlogicを呼び出し、logicからSstagDynamicLogic.stdLogicを呼び出し
+
+SstagDynamicLogic dynamicはC#から来てる?動的な型
+継承 TestHSatoDelete
+
+
+== まとめ
+最後に車買取ランキングページにアクセスした時のsstag(screening)が出力される流れをまとめる
+  ビジネスロジッククラス CarKaitoriGetCompanyRanking を例にする。
+  stdlogicメソッドにビジネスロジックが実装されているものとする。
+
+ブラウザでランキングページにアクセス
+->webサーバーの www-zba.conf に従って、apサーバーに連携
+->apサーバーのtomcatで待機している HttpServletを継承したSstagInitServlet にリクエスト
+  ->HtmlServletUtilを使ってdbサーバーと連携し、HTML_STOREに格納されたコンテンツを取得
+  ->web.xml に記載されたfilterのマッピングに従って、ReplaceFilterが実行される
+
+
+-> ビジネスロジックのクラスは SstagDynamicLogicクラスを継承し、
+  抽象メソッドstdLogic が定義されている
+-> LogicExecuterクラスの
+  logicメソッドでSstagDynamicLogicのstdLogicが呼び出される
+  executeメソッドでlogicメソッドは呼び出される
+  executeでHttpServletRequestからformInfoやpostInfoを格納している
+???ここでリクエストを組み立ててるのはわかるが、レスポンスをどこでどう処理してるのかがわからない???
+-> LogicExecuterクラスはSSTagExecuterクラスを継承し
+  SSTagExecuterクラスのexecuteメソッドをオーバーライドしている
+??? LogicExecuterクラス をどこでどう呼び出してるのかがわからない ???
+
+
+== わからない点
+レスポンスどこでどう組み立ててるの?
+htmlページの管理画面はどこでどう作って各スキーマのhtml_storeに突っ込んでるの?
+javaソースの管理画面はどこでどう作ってphoenixスキーマのlogic_storeに突っ込んでるの?
+ドメインが違う(apacheが物理的に離れてる)場合、どうやって連携してるの?
+  例.バイク買取からzbaサイトのcommonを使いたい場合、SITE_RECOG_MSTにマッピング登録する事で使えるのはわかるが、何で登録すると使えるの?
+サテライトサイトはドメイン違うが、管理画面で見ると一つのサーバー内で収まっている。どうやって処理してるの?
+
+
+== phoenix_logicがclassファイル生成されずに使えるのはなぜか
+jp/co/webcrew/loader/db/
+  ClassRepositoryDb
+  logic_storeテーブルを唯一使ってる
+  ->Runnableインターフェースを継承したLoadManagerがrunメソッドの中でClassRepositoryDbを呼び出している
+    5秒置きにスレッド実行している模様
+
+== 調査あれこれ
+-  コード内部を検索したい場合
+PHOENIX.LOGIC_STOREにjavaのコードが登録されている
+TRAINING.HTML_STOREにhtmlのコードが登録されている
+BODY(BLOB型)を検索できれば、中身だけ検索できる
+
+ランキングで検索した例.
+SELECT * FROM TRAINING.HTML_STORE
+WHERE DBMS_LOB.INSTR(BODY, UTL_RAW.CAST_TO_RAW('ランキング')) <> 0
+AND ROWNUM <= 1000
+
+・コードの追い方
+htmlのページをHTML_STOREからurlで検索する
+->コードのsstagをjavaでファイル検索する
+
+
+-  sstagの処理の流れ
+logicタグの例.
+jp.co.webcrew.phoenix.sstag.impl
+LogicExecuterのexecuteメソッドでlogicメソッドが呼び出される
+logicメソッドでSstagDynamicLogicを継承したlogicClassのstdLogicメソッドが呼び出される
+stdLogicに処理を記述するので、記述したコードが実行される
+他のsstagも同様。xxxExecuterのexecuteメソッドで実行している
+
+
+-  絞り込み
+html一覧もjavaコード一覧もデフォルトでは表示されすぎるので、探すのも大変だし違うのを編集してしまう恐れがある
+->絞り込みで必要最低限だけを表示して編集する
+
+htmlの例 amp配下のhtmlに対して改修する
+パス名にampを入れて絞り込み
+
+javaの例 車買取のjavaに対して修正する
+クラス名でcarkaitori.を入れて絞り込み
+
+
+== コードあれこれ
+-  お決まり
+<sstag type="start_marker"></sstag>
+<sstag type="start_session">id="training_form2"</sstag>
+・・・
+<sstag type="end_marker"></sstag>
+
+フォーム完了画面の場合、session閉じコードをつける
+<sstag type="end_session">id="training_form2"</sstag>
+
+
+-  フォームの自動生成
+1.フォーム管理の新規フォーム作成でフォームを作る
+2.form_dispタグを使ってフォーム用のページを作る
+<form action="test1.html" method="post">
+<table>
+<sstag type="form_disp">
+  form_id="contact_form"
+  group_id="contact1"
+  html="<tr><th>%{form.item.title}</th><td>%{form.item.html}%{form.item.error.br}%{form.item.error}</td></tr>"
+</sstag>
+
+!!!tips!!!!
+・対応テーブルで自動連動するを押せば自動的にフォームに沿ったテーブル(仮想?)が作られる
+・実際にOracleでテーブルを作成して、それを使いたい場合はテーブル管理の方で新規作成からテーブルを呼び出す。
+  OwnerがTrainingになっていること
+
+
+-  フォームの値をまとめて表示
+%{form.item.disp} を使って表示する
+<sstag type="form_disp">
+  form_id="contact_form2"
+  group_id="contact2"
+  html="<tr>
+  <th>%{form.item.title}</th><td>%{form.item.disp}</td>
+  </tr>"
+</sstag>
+</table>
+
+
+-  テーブルの中身をまとめて表示
+cont_dispタグを使ってループ表示させる。
+composite_keyで条件を指定できる(ワイルドカードは*)
+<sstag type="cont_disp">
+  table_id="order_info"
+  composite_key = "
+    name_kanji_1='*$$form.contact_form2_1.name_kanji_1.value$$*',
+    delete_flg='*$$form.contact_form2_1.delete_flg.value$$*'
+  "
+  limit='100'
+  html="<tr>
+    <td>%{cont.item.name_kanji_1.value}</td>
+    <td>%{cont.item.delete_flg.disp}</td>
+  </tr>"
+</sstag>
+
+
+-  validationの作り方
+1.form_validationタグを埋める
+入力ページ、または確認ページと入力ページの間にvalidation用のページを挟んでもok
+使い方の詳しくはsstagテキストを参照
+<sstag type="form_validation">
+  form_id="contact_form"
+  redirect_ok="thanks.html"
+</sstag>
+
+2.formのactionでform_validationを埋めているページを指定する
+<form action="test1.html" method="post">
+・・・
+
+!!!tips!!!
+・Phoenix標準機能でvalidationチェックする場合、
+  validationのページにフォームを飛ばしてチェックし、
+  okの場合、ngの場合でリダイレクトさせる。
+  リダイレクトさせるという事は、リダイレクト後はGETパラメータになるので、POSTでは取ってこれない
+
+
+-  formの値の取り方
+1.$$form.item.(name).value$$を使う
+sstagの外でも使えるので汎用性は高そう
+メールにフォームの値を埋めたり、
+例. $$form.contact_form2_1.name_kanji_1.value$$
+
+2. $$post.(name)$$を使う
+例. $$post.name_kana$$
+$$post.login_id$$, $$post.login_pw$$ でログイン情報を取ってこれる模様
+ただし、POSTなのでリダイレクトした先では使えない。この場合は$$formを使う。
+
+
+- URLパラメータからDB検索してフォームに自動登録
+カレントレコード取得タグ record_id を入力フォームのbody前に埋める
+$$get.パラメータ$$で値を取得する
+<sstag type="record_id">
+  table_id="contact_form2"
+  record_id="$$get.userid$$"
+  form_id="contact_form2"
+  group_id="contact2"
+</sstag>
+
+!!!tips!!!
+入力formのactionにはurlパラメータをつけて自分に投げ返すことこと
+つけないとurlパラメータがない状態でvalidaionから確認画面に渡るもよう
+<form action="test2.html?userid=$$get.userid$$" method="post">
+
+
+-  氏名を分けてDB検索したい場合
+氏名型にすると、氏名どちらのname属性もname_kanjiになってて氏名の区別がつかない。
+回避としては、氏名型でなくテキスト型で氏名を一つずつ作る必要がある。
+そもそも氏名をまとめて扱いたい場合(validationチェックなど)に氏名型を使うと思われる。
+
+
+-  Screeningの使い方
+1.logicをjavaで作る(SstagDynamicLogicを継承してvalidationLogicに処理を書く)
+2.logic_storeに書いたコードをアップロードする
+  ->http://admin-dev.phoenix.webcrew.co.jp/logic_store/logic_list.do
+  !!! 適用開始年月日 を必ず今日よりも前の日にすること! しないと公開されない!!!
+
+!!! tips 
+log は以下に出力される
+10.81.50.221 トレーニングの環境
+10.81.50.218 開発環境?
+
+出力場所
+/home/www/localhost/logs/tomcat/
+otherlog.log
+
+-  logicの使い方
+UPDATE TRAINING.TEST_HSATO_ORDERINFO SET delete_flg = '1' WHERE order_id = '001';
+SELECT ORDER_ID, DELETE_FLG  FROM TRAINING.TEST_HSATO_ORDERINFO WHERE ORDER_ID = '001';
+
+
+/tr-h-sato/test/test1.html
+
+106286
+106287
+106398
+
+車査定比較.com
+
+insert_date
+
+search_form1
+name_kanji
+name_kan
+contact
+
+contact_form2_1
+
+name_kanji
+name_kana
+email
+tel
+contact_time
+deleteflg
+
+training_form2_1
+
+order_info
+課題2用テーブル
+training.TEST_HSATO_ORDERINFO
+
+
+
