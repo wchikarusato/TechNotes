@@ -1,0 +1,439 @@
+
+=  背景
+angular2とは別物
+node.jsとかangularとか色んな単語が出てきててわけわからん
+どうも時代背景を知らないと全体像が見えなくなっている模様
+
+詳しくはjavascriptの歴史
+http://qiita.com/Mic-U/items/c900a6f62862954d62e0
+http://qiita.com/a_rcsin/items/0a3c8c98c8d703c49a22
+http://qiita.com/naoki_mochizuki/items/cc6ef57d35ba6a69117f
+
+IE(Jscript) vs NN(Javascript)
+Flashにボッコボコにされる
+標準化へ
+Ajaxでビッグバン
+node.jsでブラウザだけじゃない言語へ
+ビルドツール、AltJS、フレームワークでもはやJavaScriptじゃなくなる
+
+
+1995年 NetScape社 Javascript開発 ポケモン赤緑
+元々はLiveScriptだったらしいがJava流行ってたから名前ぱくった
+  Javaアプレット使ってブラウザ上で動かしてた時期
+  -> Windowsで有名はMicrosoft社 IEにJavascript乗せようとするもネスケ社からライセンス貰えず
+  ->JavascriptパクってJScriptを開発する
+  ->ブラウザ戦争
+    ->Webエンジニア血涙
+
+JavaScriptの標準化
+->標準規格ECMA-262初版が策定
+  ->Microsoft,Yahoo否定派で結局暗礁に乗り上げる
+
+2000年前半 JavaScriptいらね
+  ->インターネット普及により個人サイト激増
+  ->無駄にアニメーション流行る
+  ->ブラウザのセキュリティも考慮不足 俗にいうブラクラ
+  ->せきゅりてぃ上まずいからJavaScript無効にしてねという風潮
+  ->JavaScriptいらね
+  ->動くサイトは大体Flashが主流に
+    実際Javaアプレットより軽いし出来る事ほとんどカバーしてた
+
+
+2005年 Google Mapが世に発砲
+  Ajaxふんだんに利用
+  jQueryやprototype.jsで表現がよりリッチに
+  GooglMapよく例として出るけど Gmail もAjax
+  ちなみにAjaxの中枢となるXMLHTTPRequestを一番早く実装したのはMicfosoftのActiveXらしい
+
+
+2008年 同Google Chrome(V8エンジン搭載)誕生
+  V8エンジンとはJavaScript実行エンジンのこと
+  この辺りから Javascript=ゴテゴテしてて重い がなくなってJavascriptできる子
+  ついでにとん挫してた標準化進む
+
+2010年以降
+CommonJS誕生
+  ->Javascriptをモジュールにしたい。サーバーサイドで使いたい
+  ->2009年 Node.jsできる ブラウザ上でしか出来ないという常識を覆す
+  http://d.hatena.ne.jp/badatmath/20101020/1287587240
+  
+  ->Node.jsでゴリゴリ独自開発
+  ->いっぱい出来たからバージョン管理欲しい-> npmができる
+  ->独自に色々作られたのが事実上のCommonJS として今に残る
+  Node.js・・・サーバーサイドで動くJavaScript。当然ブラウザ上で動く訳ではない
+  npm・・・Node.js製のバージョン管理ソフト。Node.js製のツールはこのnpmで管理される
+  bower npmと同じくばーおん管理ツール
+
+ビルドツール誕生
+  ->折角モジュール化したんだからやっぱりブラウザ上でも使いたい
+  ->browserify, Webpack誕生
+    ->手動でビルドするの面倒くさい
+    ->Gulp, Grunt, guard ...etc誕生
+      タスクランナーと呼ばれている
+      Javascriptのコード書いてから実際にブラウザで使えるまでの諸々の作業を自動化してくれるツール
+      余談 gulpするとjsファイルの他、 ～.js.minというファイルもできる
+      minifyと呼ばれる作業により不要な空白等々を省いてファイルサイズを小さくしている
+      jsの圧縮ファイルみたいなイメージ
+
+AltJS誕生 もはやJavaScriptじゃなくなる
+  新しい機能盛り込まれて開発者に優しくなる
+    ES6 ECMAScript2015
+    ES5 それ以前の旧JavaScript
+  ->しかしブラウザ側が追い付かない(主にIE)
+  ->Babel登場
+    ES6で書いたコードがES5に変換される。ブラウザの実装が追い付けばそのまま使える
+  ->JavaScript をもっと簡単に使いたい
+  ->CoffeeScript, TypeScript, Dart, JSX...etc誕生
+    AltJS という概念 JavaScript をもっと簡単に記述する為の高級言語。そのままでは使えず、Javascriptに変換する事で動く
+    CoffeeScript とにかくコードの量を減らしてスッキリ。ES6に仕様が逆輸入されて下火らしい
+    TypeScript Microsoftが開発したAltJSの最有力
+    Dart Googleが開発した。各ブラウザにDartVM搭載試みたがダメでした。時代を先取りしすぎた
+
+  AltJS式に見慣れると実際に変換されたjsのコード見るのが恐ろしい
+
+フレームワーク登場
+  AngularJS  JavaScriptをベースにGoogleが開発したMVWモデルのフレームワーク
+  Angular2   AngularJSの後継だが互換ない。つまりAngularJS2 ではなくAngular2
+    AngularJSと違って、TypeScriptをベースに作られている。
+    TypeScriptはAltJSであってJavascript本体ではないからそりゃ互換性ある訳ない
+  Vue.js  ?
+  jQuery フレームワークというかライブラリ
+
+
+=  つまり?
+  AngularJS・・・JSで使ってるフレームワーク。JavascriptだけでなくHtmlにもコード記述する
+    htmlでng- のついてるタグとか、js の$scope.～ とか
+    ng-って A ng ularJS の ng?
+  CoffeeScript・・・AltJS。JSを見やすくする為のツール。言語というより書き方に近い。
+    javascriptのfunction を -> と書いたり、スコープをインデントだけで自動的に範囲割り出してくれたり
+  gulp・・・CoffeeScriptをJavascriptに変換する為の自動コンパイルツール。.jsだけでなく.js.minも作ってくれる
+  npm・・・gulp を管理しているnode.js 製のバージョン管理ツール。gulpをインストールするのに必要
+  node.js・・・サーバーサイドで動くJavascript。npmやgulpを動かすのにそもそも必要なツール
+
+  AngularCLI・・・Angular2に同封されたコマンドラインインターフェース。
+    ひな形の自動生成、更新の自動ロードなどをやってくれるコマンドラインで使う開発環境のイメージ。
+    ng serve を実行すると簡易サーバーが立って http://localhost:4200/ で見る事もできる
+    早い話しgulp 要らない(eclipse すら要らない)
+    http://qiita.com/kitfactory/items/c95ca84371670b21f4ac
+
+  どこからどこまでがAngular でどのあたりがCoffeeScript なのか見極めるのが難しい
+  とりあえずAngularJS を徹底的に学習し、見慣れないコードは知らないかCoffeeScript と判断する
+
+
+=  ここから本題
+  AngularJS参考
+  https://html5experts.jp/series/angularjs-beginning/
+
+  ディレクティブ AngularJSの仕組みで作ったカスタム要素やカスタム属性のこと 下記サンプルのng-appとか
+  ビルトインディレクティブ 標準で用意されているディレクティブ ng-から始まる属性のこと
+    aタグやformなどもAngularJSによって拡張されてるので要調査
+
+  もちろん、ビルトインだけでは足りないケースもある。
+  そんなときは以下のUI集で探すと幸せになれるかも
+  https://angular-ui.github.io/
+
+ループあれこれ
+http://qiita.com/questbeat/items/031a0106749b8ba15aca
+
+const class
+http://qiita.com/mm-git/items/ced8482a41cd070c245a
+
+nullチェック
+http://qiita.com/hamasyou/items/92ffd898f32342d41de2
+
+=  HelloWorld
+== サンプル
+  <!doctype html>
+  <html ng-app><!-- ng-appでAngularJSを利用することの宣言をおこなう -->
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script> <!-- AngularJSを読み込みます -->
+  </head>
+  <body>
+    Hello <span ng-bind="myModel"></span> !!!<!-- ng-bind で指定したモデル名myModel をデータバインド -->
+    <div><input type="text" ng-model="myModel"></div><!-- ng-modelでモデル名の宣言をします。 -->
+  </body>
+  </html
+
+-  解説
+  テキストボックスの中身に文字を入力するとHelloWorldの後ろに入れた文字が出力される
+  通常であれば、テキストの中身を取得して出力するといった処理が必要になるが
+  angularjsではモデルの宣言とデータバインドだけで完結する
+    ng-model はHTML→Angularで、
+    ng-bind はHTML←Angular
+
+== サンプル 条件
+  <!doctype html>
+  <html ng-app>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+  </head>
+  <body>
+    Hello <span ng-bind="myModel"></span> !!!
+    <div><input type="text" ng-model="myModel"></div>
+    <div ng-show="myModel">こんにちわ</div>
+    <div ng-hide="myModel">入力してください！</div>
+    <div ng-if="myModel==='World'">Hello World 完成！</div>
+  </body>
+  </html>
+
+-  解説
+  ng-show=条件, ng-if条件 trueの時に表示
+    ng-showは{ display: none; }で切り替えてるのに対して対してng-ifはdomに追加/削除してる
+
+  ng-hide=条件 trueの時に非表示
+
+
+== サンプル クラスの付け替え
+  <style>
+    .notEmpty { background-color: red; }
+  </style>
+  <body ng-class="{ notEmpty : myModel3 }">
+    Hello <span ng-bind="myModel3"></span> !!!
+    <div><input type="text" ng-model="myModel3"></div>
+  </body>
+
+-  解説
+  ng-class={ class 名 : 条件 }
+  条件はサンプル条件と同じ。上記コードだとtrueになったらnotEmptyクラスがついてstyleが切り替わる
+
+
+== サンプル ループ
+  <body>
+    <ul ng-init="items = ['html5', 'experts', 'jp']">
+      <li ng-repeat="item in items">
+        <p ng-bind="item"</p>
+      </li>
+    </ul>
+  </body>
+
+-  解説
+  'html5', 'experts', 'jp'がリストで出力される
+  情報を一覧表示の際に使う
+
+
+
+=  Formサンプル集
+== サンプル バリデーションチェック(基本形)
+<form>
+  <input type="text" ng-model="demoModel" ng-required="true">
+  <input type="text" ng-model="demoModel2" ng-maxlength="4">
+</form>
+
+-  解説
+  ng-required 必須チェック
+  ng-maxlength 文字数チェック
+  ただし、エラーになっても何もしない
+
+== サンプル バリデーションチェック
+<form name="demoForm" novalidate>
+  <input type="text" name="input3" ng-model="demoModel" ng-required="true">
+  <p ng-show="demoForm.input3.$error.required">入力必須です</p>
+ 
+  <input type="text" name="input4" ng-model="demoModel2" ng-maxlength="4">
+  <p ng-show="demoForm.input4.$error.maxlength">4文字までです</p>
+</form>
+
+-  解説
+  form にname, input にname とng-model を定義する事でpタグと紐づく
+  ng-show はサンプル条件と同じなので省略
+  form のnovalidate はブラウザに実装されているバリデーションをOFFにする宣言
+  エラーになると demoForm.input3.$error オブジェクトに保持される
+  以下が保持されるオブジェクト
+  demoForm.input3.$error	各バリデーションチェックでエラーの発生したプロパティが保持される
+  demoForm.input3.$invalid	一つでもバリデーションチェックがエラーならtrue
+  demoForm.input3.$valid	一つもバリデーションチェックがエラーでないならtrue
+  demoForm.input3.$dirty	初期値から変更があったらtrue
+  demoForm.$valid	フォーム内の全要素で一つもエラーがないならtrue
+  demoForm.$invalid	フォーム内の全要素で一つでもエラーがあるならtrue
+  
+
+== サンプル バリデーション複数
+<style>
+  .ng-invalid.ng-dirty {
+    border: solid 1px red;
+  }
+</style>
+・・・
+<form name="demoForm2" novalidate>
+  <input type="text" name="input5" ng-model="demoModel5" ng-required="true" ng-minlength="4" ng-pattern="^[0-9]+$">
+  <p ng-show="demoForm2.input5.$error.required">入力必須です</p>
+  <p ng-show="demoForm2.input5.$error.minlength">4文字以上です</p>
+  <p ng-show="demoForm2.input5.$error.pattern">半角数値のみです</p>
+
+  <p>demoForm.input5.$error.pattern : {{ demoForm.input4.$error }}</p>
+</form>
+
+-  解説
+複数のバリデーションを指定する事ができる
+またng-required を定義するとエラーが発生したら ng-invalid-required クラスに自動的に変化する
+これを利用してstyleで色を変えたのが上記
+上の場合、.ng-dirtyにより、初期値から変更があったら色を変えている
+
+
+== サンプル コントローラ
+<!DOCTYPE html>
+<html lang="ja" ng-app="myApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Controller</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+</head>
+<body ng-controller="myCtrl">
+<div>筆者：{{myName}}</div>
+
+<div>
+  エキスパートたち
+  <ul>
+    <li ng-repeat="expert in expertList">{{expert}}</li>
+  </ul>
+</div>
+
+<div>
+  {{author.name}} ( twitter - {{author.twitter}} )
+</div>
+
+<script>
+angular.module('myApp', [])
+  .controller('myCtrl', ['$scope', function($scope){
+    // Model の初期化
+    var myName = 'hikaru.sato';
+    var expertList = ['aaaaaaa', 'bbbbb', 'zzzzzzzz'];
+    var author = { name: '佐藤 光', twitter: 'ツイッターのアカウント(仮' };
+    // View にバインディング
+    $scope.myName = myName;
+    $scope.expertList = expertList;
+    $scope.author = author;
+  }]);
+</script>
+</body>
+</html>
+
+-  解説
+  ng-controller="myCtrl" コントローラの呼び出し
+    サンプルではbodyタグに書いたので、body全体にmyCtrlが適用される
+    <div ng-controller="myCtrl">myCtrl内: {{name}}</div>
+    といった感じにdivタグに記述する事も可能。
+    この場合、divの外で{{name}}を呼び出してもnameにアクセスできないのでnull表示される
+  ng-repeat は省略
+  .controller(～ コントローラの定義
+  .controller('myCtrl', ['$scope', function($scope){
+    .controller.('コントローラ名', ['依存サービス', function(依存サービス){ ここに処理書く } というフォーマット
+  
+  $scope ビューとコントローラの間に立ってやり取りを行える様にする特殊なオブジェクト
+    ビューにデータを渡したり、ビューから発生したイベントを監視したりetc.
+    AngularJSではそもそも直接DOM操作する事は推奨されていない。代わりにこの$scopeオブジェクトを通して操作する
+  var myName = 'hikaru.sato'; 様々な形式でモデルを初期化 hashも使える
+  $scope.myName = myName; $scopeにプロパティを追加する形でビューに値を返す
+
+
+== コントローラの分割
+...
+<body ng-controller="myCtrl">
+  <header ng-controller="headerCtrl">
+    ... <!-- header -->
+  </header>
+  <main ng-controller="mainCtrl">
+    ... <!-- main -->
+  </main>
+  <footer ng-controller="footerCtrl">
+    ... <!-- footer -->
+  </footer>
+<script>
+angular.module('myApp', [])
+  .controller('myCtrl', ['$scope', function($scope){
+    // 画面全体に渡るコード
+  }])
+  .controller('headerCtrl', ['$scope', function($scope){
+    // headerで必要な機能のコード
+  }])
+  .controller('mainCtrl', ['$scope', function($scope){
+    // main で必要な機能のコード
+  }])
+  .controller('footerCtrl', ['$scope', function($scope){
+    // footer で必要な機能のコード
+  }]);
+</script>
+</body>
+</html>
+
+-- 解説
+  サンプルの様にコントローラを分割する事で適用範囲を小さくする
+  ->コントローラーの機能ごとの塊を小さくできる
+  メインコンテンツ内の機能も複雑になってきたらコントローラを更に分割するべし
+
+=  サンプル スコープ
+...
+<body ng-controller="myCtrl">
+<p>①親スコープの'name' -> {{name}}</p>
+<p>②親から見ようとした 'twitter' -> {{twitter}}</p>
+ 
+  <div ng-controller="myChildCtrl">
+    <p>③myChildCtrl の 'name' -> {{name}}</p>
+    <p>④myChildCtrl の 'twitter' -> {{twitter}}</p>
+  </div>
+ 
+<script>
+angular.module('myApp', [])
+  .controller('myCtrl', ['$scope', function($scope){
+    $scope.name = 'can.i.do.web';
+  }])
+  .controller('myChildCtrl', ['$scope', function($scope){
+    $scope.twitter = 'きゃない';
+  }]);
+</script>
+
+-- 解説
+  $scopeとはなんぞや
+    ブラウザをデバッグで表示すると ng-scope クラスが自動的に付与される
+    $scope はng-app を起点にDOMツリーに沿う様に構成される模様
+    ng-controller と記述している個所をng-app の子スコープとして新たなスコープが生成される
+    要はツリー上に構成されるので親子関係が出来上がる
+  以下の様に表示される
+  ① -> can.i.do.web
+  ② -> 空
+  ③ -> can.i.do.web
+  ④ -> きゃない
+
+
+- 
+html http://kanri-dev-internal/kanri-internal/site/hks-reserve/index.html#/user_search
+依頼者番号
+リンクで ng-click="goDetail(result.orderId)" になっている
+
+-  user_search.coffee
+goDetail $state.go 使ってjs側でページ切り替える
+.detailになってるので user_search.detail へgo
+
+$scope.goDetail = (id) ->
+	$state.go('.detail', {order_id: id})
+	return
+
+-  app.coffee
+$stateProviderでuiをルーティング
+state が 'user_search.detail' になってるコードを実行する
+
+cumaAdminApp.config(['$urlRouterProvider', '$stateProvider', ($urlRouterProvider, $stateProvider) ->
+	$stateProvider.state(
+	・・・
+	).state('user_search.detail', {
+		url: '/user_search/detail:order_id',
+		onEnter:['$stateParams', '$state', '$modal', '$httpParamSerializerJQLike', ($stateParams, $state, $modal, $httpParamSerializerJQLike) ->
+			$modal.open({
+			・・・
+  onEnter stateが持つコールバックの一つ。初期処理を読み込み時に指定できる
+  
+
+-- $stateProvider
+http://qiita.com/nogson/items/63d8f007fe987e2dfe9e
+
+
+
+-- 課題
+https://ja.stackoverflow.com/questions/7273/%E8%A6%AA%E7%94%BB%E9%9D%A2%E3%81%8C%E5%AD%90%E7%94%BB%E9%9D%A2%E3%81%AE%E5%80%A4%E3%82%92%E8%A6%8B%E3%82%8B%E6%96%B9%E6%B3%95
+サブウィンドウの値を親ウィンドウのScopeに投げる方法模索中
+結局できなかったのでjQueryを使った
+
