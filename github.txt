@@ -1,0 +1,4 @@
+# gitあれこれ
+公式マニュアル
+  https://guides.github.com/
+  HelloWorldに沿ってやればgithubがどういう仕組みか、簡単な使い方はわかる
