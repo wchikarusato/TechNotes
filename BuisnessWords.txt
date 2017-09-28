@@ -1,5 +1,4 @@
 == IT業界用語
-
 オンプレ(on-premises オンプレミスの略)
   自社内にインフラ整備して機器設置してシステムを導入・運用すること
   クラウドの対義語
@@ -19,8 +18,7 @@ Exchange
 Office365
   SharePointを含めたOfficeやExchangeOnlineなどを包括的に提供するサービス
   クラウド型のOffice。買えばずっと使えたオンプレのOfficeと違って、毎月/毎年で課金する
-  
-  
+
 ChatWork
 Slack
 Redmine
