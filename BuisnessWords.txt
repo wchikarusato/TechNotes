@@ -1,0 +1,89 @@
+== IT業界用語
+
+オンプレ(on-premises オンプレミスの略)
+  自社内にインフラ整備して機器設置してシステムを導入・運用すること
+  クラウドの対義語
+
+バーチャルオフィス
+  リモートワークに特化したコミュニケーションツール
+
+サブスクリプション型
+  買い切りの対義語。毎月または毎年、一定額の料金を払って継続利用すること
+
+SharePoint
+  ファイル・情報共有サービス。WebCrewでは社内ポータルサイトとして使用している。
+  業務連絡、座席表や休暇届などの共有文書、X-Pointワークフロー申請(DBアカウント追加や休暇申請etc
+
+Exchange
+
+Office365
+  SharePointを含めたOfficeやExchangeOnlineなどを包括的に提供するサービス
+  クラウド型のOffice。買えばずっと使えたオンプレのOfficeと違って、毎月/毎年で課金する
+  
+  
+ChatWork
+Slack
+Redmine
+Deloitte. デロイトトーマツ
+
+SIP サーバー
+  SIP…ネットで電話をするのに使われる技術
+  ネットで電話するには事前に相手のIPアドレスやポート番号が分かっていなければならない
+  つまりサーバーに電話の機能を追加したこと。遠隔で内戦が使えるらしい
+
+
+== Webマーケティング用語
+
+
+== 技術系の用語
+
+Cloud9
+  cloud上で用意されたide
+  ローカル汚さないし最初からpostgreとかの環境入ってるしでお試しで使い潰すのに便利
+
+rails
+  ruby のフレームワーク
+  コマンドラインでプロジェクトからmvcモデルに必要なファイルまでを全部作ってくれる
+  Cloud9と組み合わせる事でコマンドライン10行足らずで mvcモデルに沿ったwebサイトが作れてしまう
+
+Phoenix
+  ウェブクルーおなじみ
+  注意点. logicやincludeは使用可能。screeningは使用不可。代わりに logicと AngularJSを組み合わせでバインドする。
+
+AngularJS
+  JavaScriptで使ってるフレームワーク。jsだけでなくhtmlにもAngular固有のコードを大量に記述している。
+  例(js) $scope.～ などの $がつくもの全般がAngular
+  例(html) ng-～ などの ng-がついてるタグ全部がAngular
+
+  サンプルとしてAngular2で作られた気持ち悪い動きするサイトを紹介 (1週間で作ったらしいです
+  Chrome Experimentsに選出された「Particle Develop」
+  http://ics-web.jp/projects/particle-develop/
+
+CoffeeScript
+  AltJS。JSを見やすくする為のツール。言語というよりあくまでも書き方なイメージ。
+  これ単体では動かず、gulpでJavaScriptファイルに変換する事でブラウザで動く。
+  例. javascriptで長々と書く functionの定義を coffeeでは -> とだけ書く
+  詳しくは以下のガイドラインを参照
+  http://10.81.50.45:8080/knowledge/open.knowledge/view/110
+
+node.js
+  サーバーサイドでも JavaScriptを使える様にする実行環境。Javaに対するTomcatみたいなイメージ
+  ブラウザでなくサーバーの中で動く
+  http://tracpath.com/works/development/server-side-javascript-nodejs/
+
+npm (Node Packaged Modules)
+  coffeeや gulpを管理している node.js製のバージョン管理ツール。
+  Tomcatの libに jarをダウンロードして所定位置に追加して依存してるライブラリがあったら更に追加して・・・の様な事を自動的にやってくれるイメージ
+  マシンぶっ壊れて環境変わっても npm install と打つだけで開発に必要な coffeeや gulpやらを全部インストールしてくれる凄いやつ
+  http://qiita.com/hashrock/items/15f4a4961183cfbb2658
+  公式ドキュメント https://docs.npmjs.com/
+  パッケージの一覧(警告出る) https://nodejsmodules.org/
+
+gulp
+  タスクランナー 兼 ビルドツール
+  kanri-internalでは ～.coffeeファイルを ～.jsファイルへ変換するのに使用している。
+  ～.jsだけでなく不要なスペース/改行を除去した ～.min.jsも作る
+  やっていないけど、タスクランナーなのでファイルを監視して変更あったら自動でビルドさせるという夢の様な事もできる筈
+
+
+
