@@ -45,7 +45,7 @@ rails
   Cloud9と組み合わせる事でコマンドライン10行足らずで mvcモデルに沿ったwebサイトが作れてしまう
 
 Phoenix
-  ウェブクルーおなじみ
+  おなじみのやつ
   注意点. logicやincludeは使用可能。screeningは使用不可。代わりに logicと AngularJSを組み合わせでバインドする。
 
 AngularJS
