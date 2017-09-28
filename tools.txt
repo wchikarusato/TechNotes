@@ -1,0 +1,35 @@
+# Windowsで必要なツール
+
+・システム系
+  X-Finder
+  7-zip
+  Sylpheed-3
+  ChgKey15
+
+・ターミナル
+  TeraTerm
+  PuTTY
+
+・仮想マシン絡み
+  VirtualBox
+  WinSCP
+
+・テキストエディタ
+  サクラエディタ
+
+・db絡み
+  osqledit
+
+・プログラム系
+  git
+  java 1.8
+  ruby
+  - gem
+  - MSYS2
+  - rails
+  node.js (rpm)
+  - CoffeeScript
+  - gulp
+  AngularJS
+  Angular2
+  - AngularCLI
