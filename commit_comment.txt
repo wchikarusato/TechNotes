@@ -1,0 +1,54 @@
+
+日本語で書くとくそ長い。
+英語の方が完結に書けるんじゃないかということで良く使うコメントの使い方メモ
+
+
+## fix
+  Fix A in B : Fix typo in docs
+  Fix for A  : fix for #4183
+  Fix A to B : Fix link to the spec
+  Fix A of B : fix location of favicon
+
+## add
+  Add A  : add hoge class
+  Add A to B  : add .js to import
+  Add A for B : Add test for bug #3116
+
+## remove
+  Remove A from B  : Remove Debug from tests
+  Remove A in B    : Remove duplication in render function
+  Remove unused A  : Remove unused code
+
+## use
+  Use A instead of B  : Use ++ instead of += 1
+  Use A in B  : Use stub in testing.
+  Use A for B  : use Ruby for mocking
+
+## update
+  Update A to B  : Update Modernizr to v1.6
+  Update A for B : update History.md for #1563
+  fixと同じ用途でupdate使ってはいけない(戒め
+  utf8に文字コード変えたとかlibのバージョン上げたとかそのレベルの意味でupdate
+
+## support
+  Add support for A  : Add support for callbacks
+  updateと同じ
+
+## move
+  Move A from B  : Move fix_fname from buffer.c
+  Move A to B  : Move strings to strings.js
+  Move A in B  : Move quotes in nav-main.html
+
+## rename
+  Rename A to B  : Rename a.html to b.html
+  moveとセットで
+
+## check
+  Add A check  : Add null check
+  fixで良い気もするがif文の修正用に
+
+## commitしたけど凡ミス見つけてしまった
+  oops
+  タイプミスならtypo typographoic errorの略
+
+
