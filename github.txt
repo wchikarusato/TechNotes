@@ -60,3 +60,25 @@
   ただ、英語の文章は単語の間にスペース入れないとおかしな事になるので全部が全部やるべきではない。  
 
 
+# 設定確認
+$ git config --system --list
+$ git config --global --list
+$ git config --local --list
+
+C:\usr\local\Git\mingw64\etc
+.gitconfig
+
+C:\usr\local\work_personal\TechNotes\.git
+config
+
+
+$ git config --global user.name "メインアカウント"
+$ git config --global user.email "メインアカウントメールアドレス"
+$ cd Project/develop
+$ git config --local user.name "サブアカウント"
+$ git config --local user.email "サブアカウントメールアドレス"
+
+.gitconfig
+[user]
+    name = サブアカウント
+    email = サブアカウントメールアドレス
