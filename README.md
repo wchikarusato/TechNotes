@@ -12,6 +12,7 @@ IT全般の技術系ドキュメント
 - github	githubの使い方のメモ書き  
 - commit_comment	コミットする時のコメントの仕方のメモ  
 - BuisnessWords	IT業界の用語集  
+- auth.txt	basic認証とかの覚え書き
   
 ### readmeを書く上でのメモ  
 - 改行には \<br\>タグかスペース2つを使う(本当はcssで改行書く必要ない様にしたい…  
