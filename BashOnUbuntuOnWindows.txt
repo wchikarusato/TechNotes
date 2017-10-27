@@ -1,0 +1,30 @@
+windowsでbashが使える様になるというイメージ
+
+下記記事を参照
+https://qiita.com/Aruneko/items/c79810b0b015bebf30bb
+
+仕組みはこちらを参照
+http://www.buildinsider.net/enterprise/bashonwindows/01
+
+apt-getとか不通に使える
+
+
+## 最初にやること
+  $ sudo apt-get update
+  $ sudo apt-get upgrade
+  $ sudo apt-get autoclean
+  
+- upgrade失敗したら
+  $  sudo vim /etc/apt/sources.list
+
+  deb http://jp.archive.ubuntu.com/ubuntu trusty main restricted universe multiverse
+  deb http://jp.archive.ubuntu.com/ubuntu trusty-updates main restricted universe multiverse
+  deb http://jp.archive.ubuntu.com/ubuntu trusty-security main restricted universe multiverse
+
+
+- それでもapt-get upgradeに失敗したら
+  エラーメッセージ辿る。fix-missingしてみてはどうだねと言われてたので以下実行した
+
+  $ sudo apt-get upgrade --fix-missing
+
+
